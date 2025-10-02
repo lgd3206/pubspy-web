@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PubSpy - AdSense分析</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题栏 -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🔍</span>
+                <span class="logo-text">PubSpy</span>
+            </div>
+            <div class="version">v1.0</div>
+        </header>
+
+        <!-- 当前网站分析区域 -->
+        <section class="current-site-section">
+            <h3 class="section-title">
+                <span class="section-icon">🌐</span>
+                当前网站分析
+            </h3>
+
+            <div class="site-info">
+                <div class="site-url" id="current-url">
+                    <span class="label">网站：</span>
+                    <span class="value" id="site-url-value">检测中...</span>
+                </div>
+
+                <div class="adsense-detection">
+                    <span class="label">AdSense ID：</span>
+                    <div class="adsense-result" id="adsense-result">
+                        <div class="loading" id="detection-loading">
+                            <span class="spinner"></span>
+                            正在检测...
+                        </div>
+                        <div class="adsense-ids" id="adsense-ids" style="display: none;"></div>
+                        <div class="no-adsense" id="no-adsense" style="display: none;">
+                            <span class="status-icon">❌</span>
+                            未检测到AdSense
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 相关域名分析区域 -->
+        <section class="related-domains-section">
+            <h3 class="section-title">
+                <span class="section-icon">🔗</span>
+                相关域名
+                <span class="domain-count" id="domain-count">(0)</span>
+            </h3>
+
+            <div class="search-controls">
+                <button class="search-btn" id="search-btn" disabled>
+                    <span class="btn-icon">🔍</span>
+                    查找相关域名
+                </button>
+            </div>
+
+            <div class="domains-container" id="domains-container">
+                <div class="placeholder" id="domains-placeholder">
+                    <span class="placeholder-icon">📋</span>
+                    <p>点击"查找相关域名"开始分析</p>
+                </div>
+
+                <div class="domains-loading" id="domains-loading" style="display: none;">
+                    <span class="spinner"></span>
+                    正在查找相关域名...
+                </div>
+
+                <div class="domains-list" id="domains-list" style="display: none;"></div>
+
+                <div class="domains-error" id="domains-error" style="display: none;">
+                    <span class="error-icon">⚠️</span>
+                    <p>查找失败，请稍后重试</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 操作按钮区域 -->
+        <section class="actions-section">
+            <div class="action-buttons">
+                <button class="export-btn" id="export-btn" disabled>
+                    <span class="btn-icon">📥</span>
+                    导出CSV
+                </button>
+
+                <button class="refresh-btn" id="refresh-btn">
+                    <span class="btn-icon">🔄</span>
+                    重新检测
+                </button>
+            </div>
+
+            <div class="stats" id="stats">
+                <div class="stat-item">
+                    <span class="stat-label">检测到:</span>
+                    <span class="stat-value" id="detected-count">0</span>
+                    <span class="stat-unit">个ID</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">找到:</span>
+                    <span class="stat-value" id="found-count">0</span>
+                    <span class="stat-unit">个域名</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部信息 -->
+        <footer class="footer">
+            <div class="powered-by">
+                <span>Powered by</span>
+                <span class="brand">PubSpy</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

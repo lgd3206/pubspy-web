@@ -1,0 +1,5 @@
+<!-- 这是一个临时的16x16像素的简单图标，仅用于测试 -->
+<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+  <rect width="16" height="16" fill="#4285f4"/>
+  <text x="8" y="12" font-family="Arial" font-size="10" fill="white" text-anchor="middle">🔍</text>
+</svg>
