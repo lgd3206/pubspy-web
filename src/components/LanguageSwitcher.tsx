@@ -1,37 +1,53 @@
-'use client';
+'use client'
 
-import { useRouter, usePathname } from 'next/navigation';
-import { locales } from '@/i18n/config';
+import { useParams, useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
 
-interface LanguageSwitcherProps {
-  currentLocale: string;
-}
+export function LanguageSwitcher() {
+  const locale = useLocale()
+  const params = useParams()
+  const router = useRouter()
 
-export function LanguageSwitcher({ currentLocale }: LanguageSwitcherProps) {
-  const router = useRouter();
-  const pathname = usePathname();
+  const handleLocaleChange = (newLocale: string) => {
+    // 获取当前路径，但移除locale前缀
+    const pathname = window.location.pathname
+    const currentLocale = params.locale as string
 
-  const handleLocaleChange = (locale: string) => {
-    // Remove current locale from pathname
-    const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}-[A-Z]{2}/, '');
-    const newPath = `/${locale}${pathWithoutLocale}`;
-    router.push(newPath);
-  };
+    // 移除当前locale前缀，如果存在的话
+    let newPathname = pathname
+    if (pathname.startsWith(`/${currentLocale}`)) {
+      newPathname = pathname.slice(`/${currentLocale}`.length) || '/'
+    }
+
+    // 添加新的locale前缀
+    const newPath = `/${newLocale}${newPathname === '/' ? '' : newPathname}`
+
+    router.push(newPath)
+  }
+
+  const locales = [
+    { code: 'zh-CN', name: '中文' },
+    { code: 'en-US', name: 'English' }
+  ]
 
   return (
-    <div className="flex items-center space-x-2">
-      <span className="text-sm text-gray-600">语言:</span>
+    <div className="relative">
       <select
-        value={currentLocale}
+        value={locale}
         onChange={(e) => handleLocaleChange(e.target.value)}
-        className="px-2 py-1 border border-gray-300 rounded text-sm"
+        className="appearance-none bg-white border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
       >
-        {locales.map((locale) => (
-          <option key={locale} value={locale}>
-            {locale === 'zh-CN' ? '简体中文' : 'English'}
+        {locales.map((loc) => (
+          <option key={loc.code} value={loc.code}>
+            {loc.name}
           </option>
         ))}
       </select>
+      <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+        <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
     </div>
-  );
+  )
 }
