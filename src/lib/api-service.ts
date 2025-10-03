@@ -1,6 +1,16 @@
-import type { DomainInfo } from '@/types'
 import { AdsTxtChecker } from './ads-txt-checker'
 import { globalCache, IntelligentCache } from './intelligent-cache'
+
+export interface DomainInfo {
+  domain: string
+  title: string
+  verified: boolean
+  lastChecked: string
+  source?: string
+  verificationMethod?: string
+  searchQuery?: string
+  description?: string
+}
 
 interface GoogleCustomSearchResult {
   items?: Array<{
@@ -14,7 +24,7 @@ interface GoogleCustomSearchResult {
   }
 }
 
-export class APIService {
+export class ApiService {
   private readonly GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
   private readonly GOOGLE_CX = process.env.GOOGLE_CX
   private readonly adsTxtChecker = new AdsTxtChecker()
@@ -36,13 +46,11 @@ export class APIService {
             const googleResults = await this.searchWithGoogle(publisherId)
             domains.push(...googleResults)
 
-            // 方法2: 深度搜索（适用于需要更多结果的情况）
+            // 如果结果较少，可以增加更多搜索查询
             if (domains.length < 10) {
-              console.log('标准搜索结果较少，启动深度搜索...')
-              const { SpecializedSearchService } = await import('./specialized-search')
-              const specializedSearch = new SpecializedSearchService()
-              const deepResults = await specializedSearch.deepSearchForPublisher(publisherId)
-              domains.push(...deepResults)
+              console.log('标准搜索结果较少，使用更多搜索策略...')
+              const additionalResults = await this.searchWithAdditionalQueries(publisherId)
+              domains.push(...additionalResults)
             }
 
           } else {
@@ -460,5 +468,102 @@ export class APIService {
     }
 
     return mockDomains
+  }
+
+  // 添加新的方法来适配 API 路由的需求
+  async searchPublisher(publisherId: string): Promise<{
+    success: boolean
+    domains?: DomainInfo[]
+    error?: string
+    source?: string
+  }> {
+    try {
+      const domains = await this.searchDomainsWithAdSense(publisherId)
+      return {
+        success: true,
+        domains,
+        source: domains.some(d => d.source === 'mock-search') ? 'mock' : 'api'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || '搜索失败'
+      }
+    }
+  }
+
+  async testConfiguration(): Promise<{
+    success: boolean
+    details?: any
+    error?: string
+  }> {
+    try {
+      if (!this.GOOGLE_API_KEY || !this.GOOGLE_CX) {
+        return {
+          success: false,
+          error: 'Google API配置缺失'
+        }
+      }
+
+      // 执行测试搜索
+      const testQuery = 'ca-pub-test'
+      const url = `https://www.googleapis.com/customsearch/v1?key=${this.GOOGLE_API_KEY}&cx=${this.GOOGLE_CX}&q=${encodeURIComponent(testQuery)}&num=1`
+
+      const startTime = Date.now()
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(10000),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; PubSpy/1.0)',
+        }
+      })
+      const endTime = Date.now()
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: `API错误: ${response.status} ${response.statusText}`
+        }
+      }
+
+      const data = await response.json()
+
+      return {
+        success: true,
+        details: {
+          responseItems: data.items?.length || 0,
+          totalResults: data.searchInformation?.totalResults || '0',
+          searchTime: ((endTime - startTime) / 1000).toFixed(2)
+        }
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message || 'API测试失败'
+      }
+    }
+  }
+
+  private async searchWithAdditionalQueries(publisherId: string): Promise<DomainInfo[]> {
+    // 附加搜索查询策略
+    const additionalQueries = [
+      `"${publisherId}" site:ads.txt`,
+      `"${publisherId}" "google_ad_slot"`,
+      `"${publisherId}" "pagead2.googlesyndication.com"`,
+      `"${publisherId.replace('ca-pub-', '')}" "google-adsense"`
+    ]
+
+    const results: DomainInfo[] = []
+
+    for (const query of additionalQueries) {
+      try {
+        const queryResults = await this.performGoogleSearch(query, 3)
+        results.push(...queryResults)
+        await this.delay(300)
+      } catch (error) {
+        console.error(`附加查询失败: ${query}`, error)
+      }
+    }
+
+    return results
   }
 }
