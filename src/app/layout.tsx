@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ReactNode } from 'react'
+import './globals.css'
 
 export const metadata: Metadata = {
   title: 'PubSpy - AdSense Publisher ID 检测工具',
@@ -13,9 +14,9 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="zh-CN">
+    <html>
       <body>
-        <div id="__next">{children}</div>
+        {children}
       </body>
     </html>
   )
