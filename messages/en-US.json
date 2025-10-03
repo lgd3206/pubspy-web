@@ -1,0 +1,23 @@
+{
+  "title": "PubSpy - AdSense Publisher ID Detection Tool",
+  "description": "Powerful AdSense Publisher ID detection and analysis tool",
+  "search": {
+    "placeholder": "Enter AdSense ID or website domain",
+    "button": "Search",
+    "analyzing": "Analyzing...",
+    "noResults": "No results found",
+    "error": "Search error"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "help": "Help"
+  },
+  "results": {
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "domain": "Domain",
+    "lastChecked": "Last Checked",
+    "source": "Source"
+  }
+}
