@@ -1,6 +1,3 @@
 {
-  "buildCommand": "cd pubspy-web && npm run build",
-  "outputDirectory": "pubspy-web/.next",
-  "installCommand": "cd pubspy-web && npm install",
-  "rootDirectory": "pubspy-web"
+  "framework": "nextjs"
 }
