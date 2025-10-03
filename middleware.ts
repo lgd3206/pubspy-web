@@ -4,12 +4,16 @@ import { locales, defaultLocale } from './src/i18n/config';
 export default createMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'always'
+  localePrefix: 'as-needed'
 });
 
 export const config = {
   matcher: [
-    '/',
-    '/(zh-CN|en-US)/:path*'
+    // Match all pathnames except for
+    // - /api (API routes)
+    // - /_next (Next.js internals)
+    // - /_vercel (Vercel internals)
+    // - Static files
+    '/((?!api|_next|_vercel|favicon.ico|.*\\.).*)'
   ]
 };
