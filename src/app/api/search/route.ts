@@ -60,11 +60,11 @@ export async function POST(request: NextRequest) {
       verifiedDomains = await Promise.all(
         searchResult.domains.map(async (domain: any) => {
           try {
-            const verification = await adsTxtChecker.verifyAdSenseId(domain.domain, publisherId)
+            const verification = await adsTxtChecker.checkAdsTxt(domain.domain, publisherId)
             return {
               ...domain,
-              verified: verification.verified,
-              verificationMethod: verification.method,
+              verified: verification.found && verification.isValid,
+              verificationMethod: verification.found ? 'ads.txt' : 'not-found',
               lastChecked: new Date().toISOString(),
               searchQuery: `"${publisherId}"`
             }

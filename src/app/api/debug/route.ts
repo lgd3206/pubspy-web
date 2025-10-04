@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
         })
 
         try {
-          const adsTxtResult = await adsTxtChecker.verifyAdSenseId(testDomain.domain, publisherId)
+          const adsTxtResult = await adsTxtChecker.checkAdsTxt(testDomain.domain, publisherId)
           debugInfo.adsTxtVerification = adsTxtResult
           debugInfo.debugSteps.push({
             step: `ads.txt验证测试 (${testDomain.domain})`,

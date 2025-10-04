@@ -68,11 +68,11 @@ export async function POST(request: NextRequest) {
           // 3. 验证每个域名的ads.txt
           const verifiedDomains = await Promise.all(
             searchResult.domains.map(async (domain: any) => {
-              const verification = await adsTxtChecker.verifyAdSenseId(domain.domain, adsenseId)
+              const verification = await adsTxtChecker.checkAdsTxt(domain.domain, adsenseId)
               return {
                 ...domain,
-                verified: verification.verified,
-                verificationMethod: verification.method,
+                verified: verification.found && verification.isValid,
+                verificationMethod: verification.found ? 'ads.txt' : 'not-found',
                 lastChecked: new Date().toISOString(),
                 searchQuery: `"${adsenseId}"`
               }
