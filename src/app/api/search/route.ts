@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ApiService } from '@/lib/api-service'
 import { AdsTxtChecker } from '@/lib/ads-txt-checker'
-import { IntelligentCache } from '@/lib/intelligent-cache'
+import { globalCache } from '@/lib/intelligent-cache'
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,17 +23,21 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const cache = IntelligentCache.getInstance()
     const cacheKey = `search:${publisherId}`
 
-    // 检查缓存
-    const cached = cache.get(cacheKey, 'adsenseSearch')
-    if (cached) {
+    // 检查缓存 - 使用异步方式
+    try {
+      const cached = await globalCache.get(cacheKey, async () => {
+        throw new Error('No cache') // 如果没有缓存就抛出错误，走正常流程
+      }, 'adsenseSearch')
+
       return NextResponse.json({
         success: true,
         data: cached,
         cached: true
       })
+    } catch {
+      // 缓存未命中，继续正常流程
     }
 
     const apiService = new ApiService()
@@ -88,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 缓存结果
-    cache.set(cacheKey, result, 'adsenseSearch')
+    globalCache.set(cacheKey, result, 'adsenseSearch')
 
     return NextResponse.json({
       success: true,

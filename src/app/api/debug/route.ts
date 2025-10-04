@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ApiService } from '@/lib/api-service'
 import { WebCrawler } from '@/lib/web-crawler'
 import { AdsTxtChecker } from '@/lib/ads-txt-checker'
-import { IntelligentCache } from '@/lib/intelligent-cache'
+import { globalCache } from '@/lib/intelligent-cache'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
     const apiService = new ApiService()
     const crawler = new WebCrawler()
     const adsTxtChecker = new AdsTxtChecker()
-    const cache = IntelligentCache.getInstance()
 
     const debugInfo: any = {
       publisherId,
@@ -66,7 +65,7 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString()
       })
 
-      const cacheStats = cache.getStats()
+      const cacheStats = globalCache.getStats()
       debugInfo.cacheStats = cacheStats
       debugInfo.debugSteps.push({
         step: '缓存状态检查',
