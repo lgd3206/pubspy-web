@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     const adsTxtChecker = new AdsTxtChecker()
 
     // 1. 抓取网页内容并检测AdSense ID
-    const crawlResult = await crawler.analyzeWebsite(targetUrl.toString())
+    const crawlResult = await crawler.analyzeUrl(targetUrl.toString())
 
     if (!crawlResult.success) {
       return NextResponse.json({
