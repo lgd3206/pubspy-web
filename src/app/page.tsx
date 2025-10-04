@@ -161,7 +161,7 @@ export default function Home() {
             <span className="text-4xl mr-3">🔍</span>
             <h1 className="text-3xl font-bold text-gray-900">PubSpy - AdSense检测工具</h1>
           </div>
-          <p className="text-gray-600 text-lg">强大的AdSense Publisher ID检测和分析工具</p>
+          <p className="text-gray-600 text-lg">强大的AdSense Publisher ID检测和分析工具 v1.1</p>
         </header>
 
         {/* Manual Search Section */}
